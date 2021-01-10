@@ -33,7 +33,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "react-echarts",
+  "name": "react-echarts-pro",
   "author": "evle",
   "module": "dist/react-echarts.esm.js",
   "size-limit": [
