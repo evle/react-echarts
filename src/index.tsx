@@ -22,6 +22,8 @@ export interface IReactEchartsOpts {
   theme?: Theme;
   style?: CSSProperties;
   echartOpts?: IEchartOpts;
+  onEvent?: any;
+  getInstance?: any;
 }
 
 function ReactEcharts(ReactEchartsOpts: IReactEchartsOpts) {
@@ -30,17 +32,30 @@ function ReactEcharts(ReactEchartsOpts: IReactEchartsOpts) {
     theme = 'light',
     echartOpts = {},
     style = { height: '100%', width: '100%' },
+    getInstance,
   } = ReactEchartsOpts;
   const echartElement = useRef<HTMLDivElement>(null);
   const windowSize = useWindowSize();
 
-  const getEchartInstance = useCallback(() => {
-    return (
-      (echartElement.current &&
-        echarts.getInstanceByDom(echartElement.current)) ||
-      echarts.init(echartElement.current as HTMLDivElement, theme, echartOpts)
-    );
-  }, [theme, echartOpts]);
+  const getEchartInstance = () => {
+    if (!echartElement.current) {
+      throw new Error('Cannot get echarts instance');
+    }
+
+    let instance = echarts.getInstanceByDom(echartElement.current);
+
+    if (!instance) {
+      instance = echarts.init(
+        echartElement.current as HTMLDivElement,
+        theme,
+        echartOpts
+      );
+
+      getInstance(instance);
+    }
+
+    return instance;
+  };
 
   const render = useCallback(() => {
     const echartInstance = getEchartInstance();
